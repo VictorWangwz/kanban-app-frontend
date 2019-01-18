@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
-import {Link} from "react-router-dom"
+import React, { Component } from 'react';
+import {Link} from "react-router-dom";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
-import {addProjectTask} from "../../actions/projectTaskActions"
+import {addProjectTask} from "../../actions/projectTaskActions";
 import classnames from "classnames";
 class AddProjectTask extends Component {
     constructor(){
@@ -10,10 +10,17 @@ class AddProjectTask extends Component {
         this.state = {
             summary:"",
             acceptanceCriteria: "",
-            status: ""
+            status: "",
+            errors: {}
         };
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+    componentWillReceiveProps(nextProps){
+        if(nextProps.errors){
+            this.setState({errors: nextProps.errors});
+        }
+       
     }
     onChange(e){
         this.setState({[e.target.name]:e.target.value});
@@ -28,6 +35,7 @@ class AddProjectTask extends Component {
         this.props.addProjectTask(newProjectTask, this.props.history);
     }
   render() {
+    const { errors } = this.state;
     return (
         <div className="addProjectTask">
         <div className="container">
@@ -38,9 +46,13 @@ class AddProjectTask extends Component {
                     </Link>
                     <h4 className="display-4 text-center">Add /Update Project Task</h4>
                     <form onSubmit={this.onSubmit}>
+                    
                         <div className="form-group">
-                            <input type="text" className="form-control form-control-lg" name="summary" placeholder="Project Task summary" 
+                            <input type="text" className={classnames("form-control form-control-lg", {"is-invalid": errors.summary})} name="summary" placeholder="Project Task summary" 
                             value={this.state.summary} onChange={this.onChange}/>
+                            {
+                                errors.summary && (<div className="invalid-feedback"> {errors.summary}</div>)
+                            }
                         </div>
                         <div className="form-group">
                             <textarea className="form-control form-control-lg" placeholder="Acceptance Criteria" name="acceptanceCriteria" value={this.state.acceptanceCriteria}   onChange={this.onChange}>
@@ -55,6 +67,7 @@ class AddProjectTask extends Component {
                                 <option value="DONE">DONE</option>
                             </select>
                         </div>
+                        
                         <input type="submit" className="btn btn-primary btn-block mt-4" />
                     </form>
                 </div>
@@ -73,4 +86,4 @@ const mapStateToProp = state=>({
     errors: state.errors
 })
 //connect allow us to connect to the store
-export default connect(null, {addProjectTask})(AddProjectTask)
+export default connect(mapStateToProp, {addProjectTask})(AddProjectTask)
