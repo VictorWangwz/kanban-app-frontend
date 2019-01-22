@@ -1,5 +1,5 @@
 import axios from "axios";
-import {GET_ERRORS, GET_PROJECT_TASKS, DELETE_PROJECT_TASKS }from "./types";
+import {GET_ERRORS, GET_PROJECT_TASKS, GET_PROJECT_TASK, DELETE_PROJECT_TASKS }from "./types";
 
 export const addProjectTask = (project_task, history) => async dispatch =>{
     try{
@@ -34,6 +34,19 @@ export const deleteProjectTask = pt_id => async dispatch =>{
             type: DELETE_PROJECT_TASKS,
             payload: pt_id
         })
+    }
+    
+}
+
+export const getProjectTask = ( pt_id, history) => async dispatch =>{
+    try{
+        const response = await axios.get(`http://localhost:8080/api/board/${pt_id}`);
+        dispatch({
+            type: GET_PROJECT_TASK,
+            payload: response.data
+        })
+    }catch(error){
+        history.push('/')
     }
     
 }
